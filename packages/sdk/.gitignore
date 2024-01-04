@@ -1,0 +1,22 @@
+# directories
+artifacts
+build
+cache
+coverage
+dist
+node_modules
+types
+deployments
+_docs
+_private
+.yarn
+
+
+# files
+*.env
+*.log
+.DS_Store
+.pnp.*
+coverage.json
+package-lock.json
+yarn.lock

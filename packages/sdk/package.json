@@ -1,0 +1,46 @@
+{
+  "name": "@SkyNft/sdk",
+  "description": "",
+  "version": "0.1.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "author": {
+    "name": "PurrProof",
+    "url": "https://github.com/PurrProof"
+  },
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
+    "@types/chai": "^4.3.4",
+    "@types/fs-extra": "^9.0.13",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.44.0",
+    "@typescript-eslint/parser": "^5.44.0",
+    "chai": "^4.3.7",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.28.0",
+    "eslint-config-prettier": "^8.5.0",
+    "fs-extra": "^10.1.0",
+    "hardhat": "^2.19.0",
+    "lodash": "^4.17.21",
+    "mocha": "^10.1.0",
+    "prettier": "^2.8.4",
+    "prettier-plugin-solidity": "^1.1.2",
+    "rimraf": "^4.1.2",
+    "ts-generator": "^0.1.1",
+    "ts-node": "^10.9.1",
+    "typechain": "^8.2.0",
+    "typescript": "^4.9.3"
+  },
+  "publishConfig": {
+    "access": "restricted"
+  },
+  "scripts": {
+    "clean:all": "rimraf node_modules",
+    "lint": "pnpm lint:ts && pnpm prettier:check",
+    "lint:ts": "eslint --ignore-path ./.eslintignore --ext .js,.ts .",
+    "prettier:check": "prettier --check \"**/*.{js,json,md,ts,yml}\"",
+    "prettier:write": "prettier --write \"**/*.{js,json,md,ts,yml}\""
+  },
+  "dependencies": {}
+}

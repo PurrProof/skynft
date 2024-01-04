@@ -1,6 +1,6 @@
+import { SkyProjectionPacker } from "@SkyNft/sdk";
 import type { SignerWithAddress } from "@nomicfoundation/hardhat-ethers/dist/src/signer-with-address";
 
-import { SkyProjectionPacker } from "../lib";
 import type { Greeter } from "../types/";
 
 type Fixture<T> = () => Promise<T>;

@@ -1,9 +1,9 @@
+import { ConstellationFigures, SkyProjection, SkyProjectionPacker, StarNames } from "@SkyNft/sdk";
 import { expect } from "chai";
 import { ContractTransactionResponse, EventLog } from "ethers";
 import fs from "fs";
 import { ethers } from "hardhat";
 
-import { ConstellationFigures, SkyProjection, SkyProjectionPacker, StarNames } from "../lib/";
 import type { SkyNft2, SkyNftSvgGenerator, SkyNftSvgStarNames } from "../types";
 import type { Signers } from "./types";
 import { getSvgFromTokenUri } from "./utils";

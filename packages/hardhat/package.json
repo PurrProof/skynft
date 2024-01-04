@@ -60,10 +60,11 @@
     "typechain"
   ],
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
   "scripts": {
     "clean": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json && pnpm typechain",
+    "clean:all": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json ./node_modules",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\" && pnpm typechain",
     "deploy:contracts": "hardhat deploy",
@@ -81,6 +82,7 @@
   "dependencies": {
     "hardhat-contract-sizer": "^2.10.0",
     "hardhat-insight": "^0.1.9",
-    "opn": "^6.0.0"
+    "opn": "^6.0.0",
+    "@SkyNft/sdk": "^0.1.0"
   }
 }

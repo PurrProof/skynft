@@ -1,4 +1,4 @@
-import { Constellation, ConstellationFigures, ISkyProjection } from "./index";
+import { Constellation, ConstellationFigures, ISkyProjection } from "../index";
 
 export class SkyProjection implements ISkyProjection {
   private constlFigures: ConstellationFigures;

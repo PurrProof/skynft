@@ -2,5 +2,6 @@ packages:
   # all packages in direct subdirs of packages/
   - 'packages/hardhat'
   - 'packages/nextjs'
+  - 'packages/sdk'
   # exclude packages that are inside test directories
   #- '!**/test/**'
