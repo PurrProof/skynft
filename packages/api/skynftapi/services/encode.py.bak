@@ -1,0 +1,97 @@
+"""
+Encoding is not used for now.
+"""
+
+
+class SkyMap(BaseModel):
+    latitude: float = Field(..., ge=-90, le=90)
+    longitude: float = Field(..., ge=-180, le=180)
+    place: str = ""
+    date_iso8601: str
+    constellations: List[Constellation] = None
+
+    def model_post_init(self, __context: Any) -> None:
+        self.place = get_place_name(self.latitude, self.longitude)
+
+    def encode_date_time(self) -> str:
+        # https://github.com/metomi/isodatetime
+        datetime = parse.TimePointParser().parse(self.date_iso8601)
+        year = datetime.year + 2000
+        month = datetime.month_of_year
+        day = datetime.day_of_month
+        hour = datetime.hour_of_day
+        minute = datetime.minute_of_hour
+
+        year_bin = format(year, "012b")
+        month_bin = format(month, "04b")
+        day_bin = format(day, "05b")
+        hour_bin = format(hour, "05b")
+        minute_bin = format(minute, "06b")
+
+        binary_string = year_bin + month_bin + day_bin + hour_bin + minute_bin
+        return format(int(binary_string, 2), "08x")
+
+    def encode_geo_coordinates(self) -> str:
+        precision = 10000000
+        max_coordinate_value = 90 * precision
+        lat_int = math.floor((self.latitude + 90) * precision)
+        long_int = math.floor((self.longitude + 180) * precision)
+
+        if (
+            lat_int < 0
+            or lat_int > max_coordinate_value * 2
+            or long_int < 0
+            or long_int > max_coordinate_value * 4
+        ):
+            raise ValueError("Coordinates are out of range")
+
+        return f"{lat_int:08x}{long_int:08x}"
+
+    def encode_place(self) -> str:
+        buf = self.place.encode("utf-8")
+        return f"{len(buf):02x}" + buf.hex()
+
+    def encode(self) -> str:
+        # protocol structure: 0x|lat|lon|placelen|place|datetime|skyobjects, no delimiters
+        # field lengths defined as constants
+        # bytes number PROTO_LAT = 4;
+        # bytes number PROTO_LON = 4;
+        # bytes number PROTO_PLACELEN = 1;
+        # bytes number PROTO_DATETIME = 4;
+        # bytes number PROTO_SKYOBJECT_ID = 3;
+        # bytes number PROTO_SKYOBJECT_X = 2;
+        # bytes number PROTO_SKYOBJECT_Y = 2;
+        encoded_geo = self.encode_geo_coordinates()
+        encoded_place = self.encode_place()
+        encoded_date_time = self.encode_date_time()
+        encoded_objects = "".join([obj.encode() for obj in self.objects])
+        return f"0x{encoded_geo}{encoded_place}{encoded_date_time}{encoded_objects}"
+
+
+class SkyObject(BaseModel):
+    id: int
+    x: int
+    y: int
+
+    MAX_16_BIT_SIGNED: ClassVar[int] = 32767
+    MIN_16_BIT_SIGNED: ClassVar[int] = -32768
+    RANGE_16_BIT: ClassVar[int] = 65536
+
+    def __init__(self, id: int, x: int, y: int):
+        super().__init__(id=id, x=self.limit_to_16_bit(x), y=self.limit_to_16_bit(y))
+
+    def limit_to_16_bit(self, value: int) -> int:
+        # Enforce the 16-bit signed integer limits
+        if value > self.MAX_16_BIT_SIGNED:
+            return self.MAX_16_BIT_SIGNED
+        elif value < self.MIN_16_BIT_SIGNED:
+            return self.MIN_16_BIT_SIGNED
+        return value
+
+    def encode(self) -> str:
+        x_encoded = self.x + self.RANGE_16_BIT if self.x < 0 else self.x
+        y_encoded = self.y + self.RANGE_16_BIT if self.y < 0 else self.y
+
+        encoded_string = f"{self.id:06x}{x_encoded:04x}{y_encoded:04x}"
+        # print(f"{self.id} {self.x} {self.y} {encoded_string}")
+        return encoded_string

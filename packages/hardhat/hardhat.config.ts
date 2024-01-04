@@ -1,140 +1,138 @@
-import * as dotenv from "dotenv";
-dotenv.config();
-import { HardhatUserConfig } from "hardhat/config";
+import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-toolbox";
+import "hardhat-contract-sizer";
 import "hardhat-deploy";
-import "@matterlabs/hardhat-zksync-solc";
-import "@matterlabs/hardhat-zksync-verify";
+import "hardhat-insight";
+import type { HardhatUserConfig } from "hardhat/config";
+import { vars } from "hardhat/config";
+import type { NetworkUserConfig } from "hardhat/types";
 
-// If not set, it uses ours Alchemy's default API key.
-// You can get your own at https://dashboard.alchemyapi.io
-const providerApiKey = process.env.ALCHEMY_API_KEY || "oKxs-03sij-U_N0iOlrSsZFr29-IqbuF";
-// If not set, it uses the hardhat account 0 private key.
-const deployerPrivateKey =
-  process.env.DEPLOYER_PRIVATE_KEY ?? "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80";
-// If not set, it uses ours Etherscan default API key.
-const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW";
+import "./tasks/accounts";
+import "./tasks/greet";
+import "./tasks/taskDeploy";
+
+// Run 'npx hardhat vars setup' to see the list of variables that need to be set
+
+const mnemonic: string = vars.get("MNEMONIC");
+const infuraApiKey: string = vars.get("INFURA_API_KEY");
+
+const chainIds = {
+  "arbitrum-mainnet": 42161,
+  avalanche: 43114,
+  bsc: 56,
+  ganache: 1337,
+  hardhat: 31337,
+  anvil: 31337,
+  mainnet: 1,
+  "optimism-mainnet": 10,
+  "polygon-mainnet": 137,
+  "polygon-mumbai": 80001,
+  sepolia: 11155111,
+};
+
+function getChainConfig(chain: keyof typeof chainIds): NetworkUserConfig {
+  let jsonRpcUrl: string;
+  switch (chain) {
+    case "avalanche":
+      jsonRpcUrl = "https://api.avax.network/ext/bc/C/rpc";
+      break;
+    case "bsc":
+      jsonRpcUrl = "https://bsc-dataseed1.binance.org";
+      break;
+    default:
+      jsonRpcUrl = "https://" + chain + ".infura.io/v3/" + infuraApiKey;
+  }
+  return {
+    accounts: {
+      count: 10,
+      mnemonic,
+      path: "m/44'/60'/0'/0",
+    },
+    chainId: chainIds[chain],
+    url: jsonRpcUrl,
+  };
+}
 
 const config: HardhatUserConfig = {
-  solidity: {
-    version: "0.8.17",
-    settings: {
-      optimizer: {
-        enabled: true,
-        // https://docs.soliditylang.org/en/latest/using-the-compiler.html#optimizer-options
-        runs: 200,
-      },
+  defaultNetwork: "anvil",
+  namedAccounts: {
+    deployer: 0,
+  },
+  etherscan: {
+    apiKey: {
+      arbitrumOne: vars.get("ARBISCAN_API_KEY", ""),
+      avalanche: vars.get("SNOWTRACE_API_KEY", ""),
+      bsc: vars.get("BSCSCAN_API_KEY", ""),
+      mainnet: vars.get("ETHERSCAN_API_KEY", ""),
+      optimisticEthereum: vars.get("OPTIMISM_API_KEY", ""),
+      polygon: vars.get("POLYGONSCAN_API_KEY", ""),
+      polygonMumbai: vars.get("POLYGONSCAN_API_KEY", ""),
+      sepolia: vars.get("ETHERSCAN_API_KEY", ""),
     },
   },
-  defaultNetwork: "localhost",
-  namedAccounts: {
-    deployer: {
-      // By default, it will take the first Hardhat account as the deployer
-      default: 0,
-    },
+  gasReporter: {
+    currency: "USD",
+    enabled: process.env.REPORT_GAS ? true : false,
+    excludeContracts: [],
+    src: "./contracts",
   },
   networks: {
-    // View the networks that are pre-configured.
-    // If the network you are looking for is not here you can add new network settings
     hardhat: {
-      forking: {
-        url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
-        enabled: process.env.MAINNET_FORKING_ENABLED === "true",
+      accounts: {
+        mnemonic,
+      },
+      chainId: chainIds.hardhat,
+      saveDeployments: false,
+    },
+    ganache: {
+      accounts: {
+        mnemonic,
+      },
+      chainId: chainIds.ganache,
+      url: "http://127.0.0.1:7545",
+    },
+    anvil: {
+      saveDeployments: true,
+      accounts: {
+        mnemonic: "test test test test test test test test test test test junk",
+      },
+      chainId: chainIds.anvil,
+      url: "http://127.0.0.1:8545",
+    },
+    arbitrum: getChainConfig("arbitrum-mainnet"),
+    avalanche: getChainConfig("avalanche"),
+    bsc: getChainConfig("bsc"),
+    mainnet: getChainConfig("mainnet"),
+    optimism: getChainConfig("optimism-mainnet"),
+    "polygon-mainnet": getChainConfig("polygon-mainnet"),
+    "polygon-mumbai": getChainConfig("polygon-mumbai"),
+    sepolia: getChainConfig("sepolia"),
+  },
+  paths: {
+    artifacts: "./artifacts",
+    cache: "./cache",
+    sources: "./contracts",
+    tests: "./test",
+  },
+  solidity: {
+    version: "0.8.20",
+    settings: {
+      metadata: {
+        // Not including the metadata hash
+        // https://github.com/paulrberg/hardhat-template/issues/31
+        bytecodeHash: "none",
+      },
+      // Disable the optimizer when debugging
+      // https://hardhat.org/hardhat-network/#solidity-optimizer-support
+      optimizer: {
+        enabled: false,
+        runs: 400,
       },
     },
-    mainnet: {
-      url: `https://eth-mainnet.alchemyapi.io/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    sepolia: {
-      url: `https://eth-sepolia.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    arbitrum: {
-      url: `https://arb-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    arbitrumGoerli: {
-      url: `https://arb-goerli.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    optimism: {
-      url: `https://opt-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    optimismGoerli: {
-      url: `https://opt-goerli.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygon: {
-      url: `https://polygon-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonMumbai: {
-      url: `https://polygon-mumbai.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonZkEvm: {
-      url: `https://polygonzkevm-mainnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    polygonZkEvmTestnet: {
-      url: `https://polygonzkevm-testnet.g.alchemy.com/v2/${providerApiKey}`,
-      accounts: [deployerPrivateKey],
-    },
-    zkSyncTestnet: {
-      url: "https://testnet.era.zksync.dev",
-      zksync: true,
-      accounts: [deployerPrivateKey],
-      verifyURL: "https://zksync2-testnet-explorer.zksync.dev/contract_verification",
-    },
-    zkSync: {
-      url: "https://mainnet.era.zksync.io",
-      zksync: true,
-      accounts: [deployerPrivateKey],
-      verifyURL: "https://zksync2-mainnet-explorer.zksync.io/contract_verification",
-    },
-    gnosis: {
-      url: "https://rpc.gnosischain.com",
-      accounts: [deployerPrivateKey],
-    },
-    chiado: {
-      url: "https://rpc.chiadochain.net",
-      accounts: [deployerPrivateKey],
-    },
-    base: {
-      url: "https://mainnet.base.org",
-      accounts: [deployerPrivateKey],
-    },
-    baseGoerli: {
-      url: "https://goerli.base.org",
-      accounts: [deployerPrivateKey],
-    },
-    scrollSepolia: {
-      url: "https://sepolia-rpc.scroll.io",
-      accounts: [deployerPrivateKey],
-    },
-    scroll: {
-      url: "https://rpc.scroll.io",
-      accounts: [deployerPrivateKey],
-    },
-    pgn: {
-      url: "https://rpc.publicgoods.network",
-      accounts: [deployerPrivateKey],
-    },
-    pgnTestnet: {
-      url: "https://sepolia.publicgoods.network",
-      accounts: [deployerPrivateKey],
-    },
   },
-  verify: {
-    etherscan: {
-      apiKey: `${etherscanApiKey}`,
-    },
+  typechain: {
+    outDir: "types",
+    target: "ethers-v6",
   },
 };
 
