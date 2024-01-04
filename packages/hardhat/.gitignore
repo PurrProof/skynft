@@ -12,6 +12,7 @@ types
 deployments
 _docs
 _private
+.yarn
 
 # files
 *.env
