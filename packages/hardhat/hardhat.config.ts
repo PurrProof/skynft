@@ -21,6 +21,7 @@ const chainIds = {
   avalanche: 43114,
   bsc: 56,
   ganache: 1337,
+  localhost: 31337,
   hardhat: 31337,
   anvil: 31337,
   mainnet: 1,
@@ -82,7 +83,13 @@ const config: HardhatUserConfig = {
         mnemonic,
       },
       chainId: chainIds.hardhat,
-      saveDeployments: false,
+    },
+    localhost: {
+      accounts: {
+        mnemonic,
+      },
+      chainId: chainIds.hardhat,
+      url: "http://127.0.0.1:8545",
     },
     ganache: {
       accounts: {
@@ -92,7 +99,6 @@ const config: HardhatUserConfig = {
       url: "http://127.0.0.1:7545",
     },
     anvil: {
-      saveDeployments: true,
       accounts: {
         mnemonic: "test test test test test test test test test test test junk",
       },

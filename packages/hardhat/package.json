@@ -63,11 +63,13 @@
     "access": "restricted"
   },
   "scripts": {
-    "clean": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json && pnpm typechain",
-    "clean:all": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json ./node_modules",
+    "account": "hardhat run scripts/listAccount.ts",
+    "chain": "hardhat node --network hardhat --no-deploy",
+    "clean": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json ./deployments && pnpm typechain",
+    "clean:all": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json ./node_modules ./deployments",
     "compile": "cross-env TS_NODE_TRANSPILE_ONLY=true hardhat compile",
     "coverage": "hardhat coverage --solcoverjs ./.solcover.js --temp artifacts --testfiles \"test/**/*.ts\" && pnpm typechain",
-    "deploy:contracts": "hardhat deploy",
+    "deploy:contracts": "hardhat deploy --write true",
     "lint": "pnpm lint:sol && pnpm lint:ts && pnpm prettier:check",
     "lint:sol": "solhint --max-warnings 0 \"contracts/**/*.sol\"",
     "lint:ts": "eslint --ignore-path ./.eslintignore --ext .js,.ts .",

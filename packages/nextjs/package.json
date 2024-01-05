@@ -12,7 +12,7 @@
     "check-types": "tsc --noEmit --incremental",
     "vercel": "vercel",
     "vercel:yolo": "vercel --build-env NEXT_PUBLIC_IGNORE_BUILD_ERROR=true",
-    "clean:all": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json ./node_modules"
+    "clean:all": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json ./node_modules ./contracts/deployedContracts.ts"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",
