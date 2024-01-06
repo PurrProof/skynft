@@ -1,6 +1,7 @@
 import fs from "fs";
 
-import { ConstellationCode, Star, StarID } from "./types";
+import constellationshipJson from "./constellationship.json";
+import { ConstellationCode, StarID } from "./types";
 
 export class ConstellationFigures {
   constellationCodes: ConstellationCode[] = [];
@@ -8,7 +9,7 @@ export class ConstellationFigures {
   starIdPairs: Record<ConstellationCode, StarID[][]> = {};
   starIndexPairs: Record<ConstellationCode, number[][]> = {};
 
-  constructor(input: string | { filePath: string } = { filePath: __dirname + "/constellationship.fab" }) {
+  constructor(input: string | { filePath: string } = constellationshipJson.content) {
     if (typeof input === "string") {
       this.initFromString(input);
     } else if (input.filePath && typeof input.filePath === "string") {
