@@ -8,6 +8,8 @@ import type { SkyNft2, SkyNftSvgGenerator, SkyNftSvgStarNames } from "../types";
 import type { Signers } from "./types";
 import { getSvgFromTokenUri } from "./utils";
 
+//chai.use(chaiAsPromised);
+
 describe("SkyNft2", function () {
   const TOKEN_NAME = "OnChain SkyMap";
   const TOKEN_SYMBOL = "OSKY";
@@ -84,11 +86,22 @@ describe("SkyNft2", function () {
   });
 
   it("should revert mint if token id already exists", async function () {
-    await expect(
-      skynft.mint(await this.signers.owner.getAddress(), ...this.packer.pack(skyProjection), { gasLimit: 3_000_000 }),
-    ).to.be.reverted;
-    // this does not work with anvil
-    //).to.be.revertedWithCustomError(skynft, "ERC721TokenExists");
-    //.withArgs(tokenId);
+    const packed = this.packer.pack(skyProjection);
+    expect(
+      skynft.mint(await this.signers.owner.getAddress(), ...packed, {
+        gasLimit: 3_000_000,
+      }),
+    )
+      // this works fine with hardhat
+      // this does not work correctly with anvil because anvil has no contract ABI
+      .to.be.revertedWithCustomError(skynft, "ERC721TokenExists")
+      .withArgs(packed[0]);
+  });
+
+  it("should properly enumerate tokens as contract is ERC721Enumerable", async function () {
+    const [tokenId] = this.packer.pack(skyProjection);
+    expect(await skynft.totalSupply()).to.equal(1);
+    expect(await skynft.tokenByIndex(0)).to.equal(tokenId);
+    expect(await skynft.tokenOfOwnerByIndex(await this.signers.owner.getAddress(), 0)).to.equal(tokenId);
   });
 });
