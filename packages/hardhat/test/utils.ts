@@ -1,23 +1,14 @@
 import { Buffer } from "buffer";
 import fs from "fs";
 
-export async function getSvgFromTokenUri(dataUri: string): Promise<string> {
+export async function decodeSvgDataUri(dataUri: string): Promise<string> {
   try {
-    const data = dataUri.split(",")[1];
-    if (!data) {
-      throw new Error("Invalid Data URI format");
-    }
-
-    const metadata: string = Buffer.from(data, "base64").toString("utf8");
-    const parsedMetadata: { image?: string } = JSON.parse(metadata);
-
-    if (!parsedMetadata.image || !parsedMetadata.image.startsWith("data:image/svg+xml;base64,")) {
+    if (!dataUri.startsWith("data:image/svg+xml;base64,")) {
       throw new Error("Invalid or missing image data in metadata");
     }
-
-    return Buffer.from(parsedMetadata.image.replace("data:image/svg+xml;base64,", ""), "base64").toString("utf8");
+    return Buffer.from(dataUri.replace("data:image/svg+xml;base64,", ""), "base64").toString("utf8");
   } catch (error) {
-    console.error("Error getting SVG from token URI:", error);
+    console.error("Error getting SVG from data URI:", error);
     throw error;
   }
 }

@@ -5,7 +5,7 @@ import { ethers } from "hardhat";
 import opn from "opn";
 
 import type { SkyNft } from "../types";
-import { getSvgFromTokenUri, parseConstellations } from "./utils";
+import { parseConstellations } from "./utils";
 
 describe("SkyNft", function () {
   let skynft: SkyNft;
@@ -124,6 +124,28 @@ describe("SkyNft", function () {
     await opn("build/token1.svg", { wait: false });
   });
 });
+
+// this function is not utils because it is outadted
+async function getSvgFromTokenUri(dataUri: string): Promise<string> {
+  try {
+    const data = dataUri.split(",")[1];
+    if (!data) {
+      throw new Error("Invalid Data URI format");
+    }
+
+    const metadata: string = Buffer.from(data, "base64").toString("utf8");
+    const parsedMetadata: { image?: string } = JSON.parse(metadata);
+
+    if (!parsedMetadata.image || !parsedMetadata.image.startsWith("data:image/svg+xml;base64,")) {
+      throw new Error("Invalid or missing image data in metadata");
+    }
+
+    return Buffer.from(parsedMetadata.image.replace("data:image/svg+xml;base64,", ""), "base64").toString("utf8");
+  } catch (error) {
+    console.error("Error getting SVG from token URI:", error);
+    throw error;
+  }
+}
 
 class SkyObject {
   id: number;

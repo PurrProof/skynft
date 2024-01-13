@@ -29,4 +29,17 @@ export class SkyProjection implements ISkyProjection {
       return constellation.stars.length > 0;
     });
   }
+
+  formatDate(): string {
+    const date = new Date(this.date_iso8601);
+    const year = date.getFullYear();
+    const isBC = year < 0;
+    const bcPrefix = isBC ? "-00" : "";
+    const formattedDate = date
+      .toISOString()
+      .replace(/T/, " ")
+      .replace(/:\d{2}\..+/, "");
+
+    return isBC ? bcPrefix + formattedDate : formattedDate;
+  }
 }

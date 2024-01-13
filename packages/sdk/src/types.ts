@@ -19,4 +19,5 @@ export interface ISkyProjection {
   longitude: number;
   date_iso8601: string;
   constellations: Constellation[];
+  formatDate(): string;
 }

@@ -6,9 +6,7 @@ import { ethers } from "hardhat";
 
 import type { SkyNft2, SkyNftSvgGenerator, SkyNftSvgStarNames } from "../types";
 import type { Signers } from "./types";
-import { getSvgFromTokenUri } from "./utils";
-
-//chai.use(chaiAsPromised);
+import { decodeSvgDataUri } from "./utils";
 
 describe("SkyNft2", function () {
   const TOKEN_NAME = "OnChain SkyMap";
@@ -74,9 +72,26 @@ describe("SkyNft2", function () {
 
     expect(await skynft.ownerOf(mintedTokenId)).to.equal(await this.signers.owner.getAddress());
 
-    const tokenUriDataJson = await skynft.tokenURI(mintedTokenId);
-    const svg = await getSvgFromTokenUri(tokenUriDataJson);
-    console.log(svg);
+    // TODO: check tokenUri metadata format/fields
+    const tokenUri = await skynft.tokenURI(mintedTokenId);
+    const parts = tokenUri.split(",");
+    let strMetadata = parts[1];
+    if (tokenUri.includes("data:application/json;base64")) {
+      strMetadata = Buffer.from(parts[1], "base64").toString("utf-8");
+    }
+    const jsonMetadata = JSON.parse(decodeURIComponent(strMetadata));
+
+    // check token name
+    expect(jsonMetadata.name).to.contain(skyProjection.latitude);
+    expect(jsonMetadata.name).to.contain(skyProjection.longitude);
+    expect(jsonMetadata.name).to.contain(skyProjection.formatDate());
+
+    // check svg
+    if (!jsonMetadata.image) {
+      expect.fail("Metadata doesn't contain image field.");
+    }
+    const svg = await decodeSvgDataUri(jsonMetadata.image);
+    //console.log(svg);
     expect(svg).to.include("<svg");
     fs.writeFileSync("build/token1.svg", svg, "utf-8");
   });
