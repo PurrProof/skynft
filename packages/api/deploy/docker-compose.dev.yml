@@ -1,15 +1,16 @@
-version: '3.9'
+version: "3.9"
 
 services:
   api:
     ports:
       # Exposes application port.
-    - "8000:8000"
+      - "8000:8000"
     build:
       target: dev
     volumes:
       # Adds current directory as volume.
-    - .:/app/src/
+      - .:/app/src/
     environment:
       # Enables autoreload.
       SKYNFTAPI_RELOAD: "True"
+      SKYNFTAPI_CORS_ORIGINS: "http://localhost,http://localhost:3000"

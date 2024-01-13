@@ -1,6 +1,7 @@
 import enum
 from pathlib import Path
 from tempfile import gettempdir
+from typing import List
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -32,6 +33,7 @@ class Settings(BaseSettings):
     workers_count: int = 1
     # Enable uvicorn reloading
     reload: bool = False
+    cors_origins: str = ""
 
     # Current environment
     environment: str = "dev"
@@ -43,6 +45,10 @@ class Settings(BaseSettings):
         env_prefix="SKYNFTAPI_",
         env_file_encoding="utf-8",
     )
+
+    @property
+    def cors_origins_list(self) -> List[str]:
+        return self.cors_origins.split(',')
 
 
 settings = Settings()

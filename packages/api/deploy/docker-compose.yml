@@ -1,4 +1,4 @@
-version: '3.9'
+version: "3.9"
 
 services:
   api:
@@ -9,6 +9,6 @@ services:
     image: skynftapi:${SKYNFTAPI_VERSION:-latest}
     restart: always
     env_file:
-    - .env
+      - .env
     environment:
       SKYNFTAPI_HOST: 0.0.0.0

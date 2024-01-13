@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import ValidationError
 
+from skynftapi.settings import settings
 from skynftapi.logging import configure_logging
 from skynftapi.services.geocoding import GeocodingError
 from skynftapi.web.api.router import api_router
@@ -33,14 +34,9 @@ def get_app() -> FastAPI:
         default_response_class=UJSONResponse,
     )
 
-    origins = [
-        "http://localhost",
-        "http://localhost:3000",
-    ]
-
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=origins,
+        allow_origins=settings.cors_origins_list,
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
