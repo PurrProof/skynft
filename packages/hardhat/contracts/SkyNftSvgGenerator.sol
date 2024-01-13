@@ -268,7 +268,9 @@ contract SkyNftSvgGenerator is ISvgGenerator {
         }
     }
 
-    function getSvg(uint256 tokenId,SkyMap calldata skymap) external view returns (string memory svgXml) {
+    function getSvg(uint256 tokenId,SkyMap calldata skymap) external view returns (string memory svgXml, string memory tokenName) {
+        string memory coords = SkyNftUtils.getCoords(tokenId);
+        string memory datetime = SkyNftUtils.getDateTime(tokenId);
         string memory halfW = Strings.toStringSigned(CANVAS_WIDTH / 2);
         string memory halfH = Strings.toStringSigned(CANVAS_HEIGHT / 2);
         string memory bottomArcPath = string.concat('<path id="arcb" d="M0 ',halfH,'A',halfW,' ',
@@ -310,10 +312,11 @@ contract SkyNftSvgGenerator is ISvgGenerator {
             '<text x="100%" y="50%" class="le">E</text>'
             '<text x="0" y="50%" class="lw">W</text>\n',
             bottomArcPath,
-            _getBottomArcText(SkyNftUtils.getCoords(tokenId), 25),
-            _getBottomArcText(SkyNftUtils.getDateTime(tokenId), 75),
+            _getBottomArcText(coords, 25),
+            _getBottomArcText(datetime, 75),
             "</svg>"
         );
+        tokenName = string.concat(coords, ' ', datetime);
     }
 
     function _getBottomArcText(string memory text, uint256 offsetPercent) private pure returns (string memory code) {

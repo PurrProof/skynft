@@ -63,12 +63,12 @@ contract SkyNft2 is ERC721Enumerable {
             revert ERC721NonexistentToken(tokenId);
         }
 
-        string memory svg = _svgGenerator.getSvg(tokenId, skyMaps[tokenId]);
+        (string memory svg, string memory name) = _svgGenerator.getSvg(tokenId, skyMaps[tokenId]);
 
         bytes memory dataURI = abi.encodePacked(
             "{",
-            '"name": "',
-            _getTokenName(tokenId),
+            '"name": "SkyMap @',
+            name,
             '",',
             '"description": "",',
             '"image": "data:image/svg+xml;base64,',
@@ -77,10 +77,5 @@ contract SkyNft2 is ERC721Enumerable {
             "}"
         );
         return string.concat("data:application/json;base64,", Base64.encode(dataURI));
-    }
-
-    function _getTokenName(uint256 tokenId) private pure returns (string memory name) {
-        // TODO: decode coords and time
-        return string.concat("SkyMap #", Strings.toString(tokenId));
     }
 }
