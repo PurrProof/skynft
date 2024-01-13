@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
-import { useAccount } from 'wagmi';
+import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
-import { SkyNftToken } from './SkyNftToken'; // Adjust the path as necessary
+import { SkyNftToken } from "./SkyNftToken";
 
 export const SkyNftTokenList = () => {
   const { address } = useAccount();
@@ -19,21 +19,22 @@ export const SkyNftTokenList = () => {
     setTokenIndexes([]);
 
     if (address) {
-      // If there's an address, fetch the token IDs
-      const newTokenIndexes = balance ? [...Array(balance).keys()] : [];
+      const newTokenIndexes = balance ? [...Array(parseInt(balance)).keys()] : [];
       setTokenIndexes(newTokenIndexes);
     }
   }, [address, balance]);
-  
+
   return (
-    <div>
-      <h3>Your SkyNft Tokens</h3>
+    <div className="mb-10">
+      <h2 className="text-2xl sm:text-3xl font-extrabold mb-4">Your SkyNft Tokens</h2>
       {tokenIndexes.length === 0 ? (
         <p>You currently have no tokens.</p>
       ) : (
-        tokenIndexes.map((index) => (
-          <SkyNftToken key={index} ownerAddress={address} index={index} />
-        ))
+        <div className="flex flex-row gap-5">
+          {tokenIndexes.map(index => (
+            <SkyNftToken key={index} ownerAddress={address} index={index} />
+          ))}
+        </div>
       )}
     </div>
   );

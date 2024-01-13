@@ -75,7 +75,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     SkyNft2: {
-      address: "0x4000F8820522AC96C4221b299876e3e53bCc8525",
+      address: "0x9c65f85425c619A6cB6D29fF8d57ef696323d188",
       abi: [
         {
           inputs: [
@@ -701,7 +701,7 @@ const deployedContracts = {
       },
     },
     SkyNftSvgGenerator: {
-      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      address: "0x9338CA7d556248055f5751d85cDA7aD6eF254433",
       abi: [
         {
           inputs: [],
@@ -769,6 +769,11 @@ const deployedContracts = {
             {
               internalType: "string",
               name: "svgXml",
+              type: "string",
+            },
+            {
+              internalType: "string",
+              name: "tokenName",
               type: "string",
             },
           ],

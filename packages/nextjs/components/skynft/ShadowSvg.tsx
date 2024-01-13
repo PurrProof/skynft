@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface ShadowSvgProps {
   svgContent: string;
@@ -12,7 +12,7 @@ const ShadowSvg = ({ svgContent, width, height }: ShadowSvgProps) => {
   useEffect(() => {
     if (containerRef.current) {
       if (!containerRef.current.shadowRoot) {
-        const shadowRoot = containerRef.current.attachShadow({ mode: 'open' });
+        const shadowRoot = containerRef.current.attachShadow({ mode: "open" });
         shadowRoot.innerHTML = `
           <style>
             :host {
