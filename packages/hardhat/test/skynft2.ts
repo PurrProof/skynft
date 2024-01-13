@@ -59,10 +59,6 @@ describe("SkyNft2", function () {
   });
 
   it("should create svg", async function () {
-    const tmp = this.packer.pack(skyProjection);
-    console.log(tmp);
-    console.log(tmp[5].join(","));
-
     const response: ContractTransactionResponse = await skynft.mint(
       await this.signers.owner.getAddress(),
       ...this.packer.pack(skyProjection),
