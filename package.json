@@ -10,6 +10,7 @@
     "verify": "pnpm --filter @SkyNft/hardhat verify",
     "compile": "pnpm --filter @SkyNft/hardhat compile",
     "generate": "pnpm --filter @SkyNft/hardhat generate",
+    "hardhat:size": "pnpm --filter @SkyNft/hardhat size",
     "hardhat:lint": "pnpm --filter @SkyNft/hardhat lint",
     "hardhat:lint-staged": "pnpm --filter @SkyNft/hardhat lint-staged",
     "hardhat:test": "pnpm --filter @SkyNft/hardhat test --",

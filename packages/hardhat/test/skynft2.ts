@@ -3,7 +3,9 @@ import { expect } from "chai";
 import { ContractTransactionResponse, EventLog } from "ethers";
 import fs from "fs";
 import { ethers } from "hardhat";
+import { hardhat } from "viem/chains";
 
+import { TxReceipt } from "../../nextjs/components/scaffold-eth/Contract/TxReceipt";
 import type { SkyNft2, SkyNftSvgGenerator, SkyNftSvgStarNames } from "../types";
 import type { Signers } from "./types";
 import { decodeSvgDataUri } from "./utils";
@@ -23,6 +25,7 @@ describe("SkyNft2", function () {
 
     const signers = await ethers.getSigners();
     this.signers.owner = signers[0];
+    this.signers.admin = signers[1];
 
     const constlFigures = new ConstellationFigures();
     const starNames = new StarNames();
@@ -54,6 +57,32 @@ describe("SkyNft2", function () {
 
     // init sky projection object
     skyProjection = new SkyProjection(JSON.parse(apiResponse), constlFigures);
+  });
+
+  it("should be Ownable by deployer", async function () {
+    expect(await skynft.owner()).to.equal(await this.signers.owner.getAddress());
+  });
+
+  it("should be Pausable/unpausable by owner", async function () {
+    expect(await skynft.paused()).to.be.false;
+
+    const tx1: ContractTransactionResponse = await skynft.pause();
+    await expect(await tx1.wait()).to.emit(skynft, "Paused");
+    expect(await skynft.paused()).to.be.true;
+    if ((await ethers.provider.getNetwork()).name != "anvil")
+      //it works bad with anvil
+      await expect(
+        skynft.mint(await this.signers.owner.getAddress(), ...this.packer.pack(skyProjection), {
+          gasLimit: 3_000_000,
+        }),
+      ).to.be.revertedWithCustomError(skynft, "EnforcedPause");
+    await expect(skynft.connect(this.signers.admin).unpause()).to.be.revertedWithCustomError(
+      skynft,
+      "OwnableUnauthorizedAccount",
+    );
+    const tx2: ContractTransactionResponse = await skynft.connect(this.signers.owner).unpause();
+    await expect(await tx2.wait()).to.emit(skynft, "Unpaused");
+    expect(await skynft.paused()).to.be.false;
   });
 
   it("should create svg", async function () {
