@@ -30,7 +30,7 @@ export const SkyNftCreator = () => {
   ////////////////const skyProjection = new SkyProjection(apiResponse, constlFigures);
 
   const { writeAsync, isLoading1 } = useScaffoldContractWrite({
-    contractName: "SkyNft2",
+    contractName: "SkyNft",
     functionName: "mint",
     args: [],
     value: parseEther("0"),

@@ -14,14 +14,14 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
   const [tokenData, setTokenData] = useState<any>(null);
 
   const { data, isLoading } = useScaffoldContractRead({
-    contractName: "SkyNft2",
+    contractName: "SkyNft",
     functionName: "tokenOfOwnerByIndex",
     args: [ownerAddress, index],
     watch: true,
   });
 
   const { data: tokenUri } = useScaffoldContractRead({
-    contractName: "SkyNft2",
+    contractName: "SkyNft",
     functionName: "tokenURI",
     args: [tokenId],
     watch: tokenId !== null,

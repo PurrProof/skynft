@@ -6,14 +6,14 @@ import { ethers } from "hardhat";
 import { hardhat } from "viem/chains";
 
 import { TxReceipt } from "../../nextjs/components/scaffold-eth/Contract/TxReceipt";
-import type { SkyNft2, SkyNftSvgGenerator, SkyNftSvgStarNames } from "../types";
+import type { SkyNft, SkyNftSvgGenerator, SkyNftSvgStarNames } from "../types";
 import type { Signers } from "./types";
 import { decodeSvgDataUri } from "./utils";
 
-describe("SkyNft2", function () {
+describe("SkyNft", function () {
   const TOKEN_NAME = "OnChain SkyMap";
   const TOKEN_SYMBOL = "OSKY";
-  let skynft: SkyNft2;
+  let skynft: SkyNft;
   let svgGen: SkyNftSvgGenerator;
   let svgGenStarNames: SkyNftSvgStarNames;
   let skyProjection: SkyProjection;
@@ -48,8 +48,8 @@ describe("SkyNft2", function () {
     await svgGen.waitForDeployment(); // Wait for the deployment transaction
 
     // deploy the SkyNft contract
-    const SkyNftFact = await ethers.getContractFactory("SkyNft2");
-    skynft = (await SkyNftFact.deploy(TOKEN_NAME, TOKEN_SYMBOL, await svgGen.getAddress())) as SkyNft2;
+    const SkyNftFact = await ethers.getContractFactory("SkyNft");
+    skynft = (await SkyNftFact.deploy(TOKEN_NAME, TOKEN_SYMBOL, await svgGen.getAddress())) as SkyNft;
     await skynft.waitForDeployment(); // Wait for the deployment transaction
 
     // prepare api response

@@ -1,7 +1,7 @@
-import { HardhatRuntimeEnvironment } from "hardhat/types";
 import { DeployFunction } from "hardhat-deploy/types";
+import { HardhatRuntimeEnvironment } from "hardhat/types";
 
-const deploySkyNft2: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
+const deploySkyNft: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deployer } = await hre.getNamedAccounts();
   const { deploy } = hre.deployments;
 
@@ -22,8 +22,8 @@ const deploySkyNft2: DeployFunction = async function (hre: HardhatRuntimeEnviron
     autoMine: true,
   });
 
-  // Deploy SkyNft2 contract
-  const skynft = await deploy("SkyNft2", {
+  // Deploy SkyNft contract
+  const skynft = await deploy("SkyNft", {
     from: deployer,
     args: ["OnChain SkyMap", "OSKY", svgGen.address],
     log: true,
@@ -33,6 +33,6 @@ const deploySkyNft2: DeployFunction = async function (hre: HardhatRuntimeEnviron
   // Additional deployment logic or interactions can be added here if needed
 };
 
-export default deploySkyNft2;
+export default deploySkyNft;
 
-deploySkyNft2.tags = ["SkyNft2"];
+deploySkyNft.tags = ["SkyNft"];

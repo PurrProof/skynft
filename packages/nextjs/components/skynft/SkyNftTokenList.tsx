@@ -8,7 +8,7 @@ export const SkyNftTokenList = () => {
   const [tokenIndexes, setTokenIndexes] = useState<number[]>([]);
 
   const { data: balance } = useScaffoldContractRead({
-    contractName: "SkyNft2",
+    contractName: "SkyNft",
     functionName: "balanceOf",
     args: [address],
     watch: true,

@@ -15,7 +15,7 @@ export const SkyNftMint = async (apiResponseData, accountAddress) => {
 
   try {
     const { writeAsync } = useScaffoldContractWrite({
-      contractName: "SkyNft2",
+      contractName: "SkyNft",
       functionName: "mint",
       args: [accountAddress, ...packer.pack(skyProjection)],
       value: parseEther("0"),
