@@ -5,8 +5,7 @@ import { useAccount } from "wagmi";
 import { parseEther } from "viem";
 import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
 import { ConstellationFigures, SkyProjection, SkyProjectionPacker, StarNames } from "@SkyNft/sdk";
-
-const API_URL = "http://127.0.0.1:8000/api/skymap/";
+import scaffoldConfig from "~~/scaffold.config";
 
 export const SkyNftCreator = () => {
   const areEqual = (prevProps, nextProps) => true;
@@ -54,9 +53,9 @@ export const SkyNftCreator = () => {
 
     try {
       const response = await axios.get(
-        `${API_URL}?latitude=${coordinates.lat}&longitude=${coordinates.lng}&date_iso8601=${encodeURIComponent(
-          dateTime,
-        )}`,
+        `${scaffoldConfig.skyNftApiUrl}?latitude=${coordinates.lat}&longitude=${
+          coordinates.lng
+        }&date_iso8601=${encodeURIComponent(dateTime)}`,
       );
       if (!response.data) {
         // && response.data.latitude && response.data.longitude && response.data.date_iso8601

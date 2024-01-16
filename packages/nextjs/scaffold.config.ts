@@ -7,6 +7,7 @@ export type ScaffoldConfig = {
   walletConnectProjectId: string;
   onlyLocalBurnerWallet: boolean;
   walletAutoConnect: boolean;
+  skyNftApiUrl: string;
 };
 
 const scaffoldConfig = {
@@ -38,6 +39,8 @@ const scaffoldConfig = {
    * 2. If user is not connected to any wallet:  On reload, connect to burner wallet if burnerWallet.enabled is true && burnerWallet.onlyLocal is false
    */
   walletAutoConnect: true,
+
+  skyNftApiUrl: process.env.SKYNFT_API_URL || "http://127.0.0.1:8000/api/skymap/",
 } as const satisfies ScaffoldConfig;
 
 export default scaffoldConfig;
