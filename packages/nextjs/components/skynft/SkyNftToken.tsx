@@ -37,8 +37,8 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
     if (tokenUri) {
       try {
         const jsonBase64 = tokenUri.split(",")[1];
-        const json = atob(jsonBase64);
-        const parsedData = JSON.parse(json);
+        const json = Buffer.from(jsonBase64, "utf-8").toString();
+        const parsedData = JSON.parse(decodeURIComponent(json));
         setTokenData(parsedData);
       } catch (error) {
         console.error("Error parsing token data:", error);

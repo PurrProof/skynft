@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import axios from "axios";
 import { useAccount } from "wagmi";
 import { parseEther } from "viem";
-import { useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useScaffoldContractWrite, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { ConstellationFigures, SkyProjection, SkyProjectionPacker, StarNames } from "@SkyNft/sdk";
 import scaffoldConfig from "~~/scaffold.config";
 
+const starNames = new StarNames();
+const constlFigures = new ConstellationFigures();
+const packer = new SkyProjectionPacker(constlFigures, starNames);
+
 export const SkyNftCreator = () => {
+  ////////////////////
+  ////CHECK WETHER CONNECTED
+  const account = useAccount();
+  ////////////////const skyProjection = new SkyProjection(apiResponse, constlFigures);
+
   const areEqual = (prevProps, nextProps) => true;
   const SkyNftLocationSelectorDynamic = React.memo(
     dynamic(() => import("./SkyNftLocationSelector"), { ssr: false }),
@@ -19,14 +28,24 @@ export const SkyNftCreator = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
 
-  ////////////////////
-  ////CHECK WETHER CONNECTED
-  const account = useAccount();
+  const tokenId = useMemo(() => {
+    if (coordinates && dateTime) {
+      return packer.tokenId(coordinates.lat, coordinates.lng, new Date(dateTime));
+    }
+    return null;
+  }, [coordinates, dateTime]);
 
-  const starNames = new StarNames();
-  const constlFigures = new ConstellationFigures();
-  const packer = new SkyProjectionPacker(constlFigures, starNames);
-  ////////////////const skyProjection = new SkyProjection(apiResponse, constlFigures);
+  useEffect(() => {
+    // Reset error when coordinates or dateTime change
+    setError("");
+  }, [coordinates, dateTime]);
+
+  const { data: ownerOfData, isError: isOwnerOfError } = useScaffoldContractRead({
+    contractName: "SkyNft",
+    functionName: "ownerOf",
+    args: [tokenId],
+    watch: tokenId != null, // Only watch and update when tokenId is not null
+  });
 
   const { writeAsync, isLoading1 } = useScaffoldContractWrite({
     contractName: "SkyNft",
@@ -45,6 +64,9 @@ export const SkyNftCreator = () => {
   const handleMint = async () => {
     if (!coordinates || !dateTime) {
       setError("Please select both coordinates and date/time.");
+      return;
+    } else if (ownerOfData && !isOwnerOfError) {
+      setError("Token already exists.");
       return;
     }
 
