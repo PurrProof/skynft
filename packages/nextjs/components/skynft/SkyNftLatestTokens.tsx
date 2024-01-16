@@ -16,7 +16,6 @@ export const SkyNftLatestTokens = () => {
     setTokenIndexes([]);
     const N = 5;
     const newTokenIndexes = totalSupply ? [...Array(parseInt(totalSupply)).keys()].slice(-N).reverse() : [];
-    console.log([...Array(parseInt(totalSupply)).keys()]);
     setTokenIndexes(newTokenIndexes);
   }, [totalSupply]);
 

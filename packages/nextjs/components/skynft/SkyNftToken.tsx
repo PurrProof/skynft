@@ -12,6 +12,7 @@ interface SkyNftTokenProps {
 export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
   const [tokenId, setTokenId] = useState<number | null>(null);
   const [tokenData, setTokenData] = useState<any>(null);
+  const [locationName, setLocationName] = useState("");
 
   const funcName = ownerAddress == "" ? "tokenByIndex" : "tokenOfOwnerByIndex";
   const args = ownerAddress == "" ? [index] : [ownerAddress, index];
@@ -49,6 +50,34 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
     }
   }, [tokenUri]);
 
+  useEffect(() => {
+    if (tokenData?.name) {
+      const coordMatch = tokenData.name.match(/@([\d.-]+),\s*([\d.-]+)/);
+      if (coordMatch) {
+        const latitude = coordMatch[1];
+        const longitude = coordMatch[2];
+        fetchLocationName(latitude, longitude);
+      }
+    }
+  }, [tokenData]);
+
+  const fetchLocationName = async (latitude, longitude) => {
+    try {
+      // Nominatim API endpoint for reverse geocoding
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=9`,
+      );
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      const data = await response.json();
+      setLocationName(data.display_name);
+    } catch (error) {
+      console.error("Error fetching location name:", error);
+      setLocationName(""); // Reset location name in case of error
+    }
+  };
+
   if (isLoading) {
     return <div>Loading token...</div>;
   }
@@ -78,7 +107,9 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
             </CopyToClipboard>
           </span>
         </h2>
-        <p style={{ wordBreak: "break-all" }}>{tokenData?.name}</p>
+        <p style={{ wordBreak: "break-all" }}>
+          {tokenData?.name} <address>{locationName}</address>
+        </p>
       </div>
     </div>
   );
