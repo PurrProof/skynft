@@ -17,24 +17,33 @@ export class SkyProjectionPacker {
   /*
     function mint(
     ....
-    uint32 latitude,
-    uint32 longitude,
-    uint32 datetime,
+    uint256 tokenId,
     uint96 constlBitMap,
     uint32[] calldata constlStarsBitMapArray,
     uint24[] calldata starsCoords)
   */
   pack(projection: SkyProjection): [bigint, bigint, string, bigint, number[], number[]] {
     return [
-      this._tokenId(
-        this._latitude(projection.latitude),
-        this._longitude(projection.longitude),
-        this._date(new Date(projection.date_iso8601)),
-      ),
+      this.tokenId(projection.latitude, projection.longitude, projection.date_iso8601),
       this._visibleConstls(projection.constellations.map((constellation) => constellation.code)),
       this._visibleConstlStarsHex(projection.constellations),
       ...this._starsCoords(projection.constellations),
     ];
+  }
+
+  tokenId(lat: number, lng: number, dt: Date): bigint {
+    const latitude = this._latitude(lat);
+    const longitude = this._longitude(lng);
+    const datetime = this._date(dt);
+
+    // Ensure that the input values fit within the expected range
+    if (latitude >= 2n ** 32n || longitude >= 2n ** 32n || datetime >= 2n ** 32n) {
+      throw new Error("Input values must be within 32-bit range.");
+    }
+
+    // Combine the values into a single bigint
+    const packed = datetime | (BigInt(longitude) << 32n) | (BigInt(latitude) << 64n);
+    return packed;
   }
 
   private _latitude(latitude: number): number {
@@ -51,17 +60,6 @@ export class SkyProjectionPacker {
       throw new Error("Longitude is out of range");
     }
     return longInt;
-  }
-
-  private _tokenId(latitude: number, longitude: number, datetime: bigint): bigint {
-    // Ensure that the input values fit within the expected range
-    if (latitude >= 2n ** 32n || longitude >= 2n ** 32n || datetime >= 2n ** 32n) {
-      throw new Error("Input values must be within 32-bit range.");
-    }
-
-    // Combine the values into a single bigint
-    const packed = datetime | (BigInt(longitude) << 32n) | (BigInt(latitude) << 64n);
-    return packed;
   }
 
   private _date(date: Date): bigint {

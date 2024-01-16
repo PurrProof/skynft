@@ -17,7 +17,14 @@ export interface Constellation {
 export interface ISkyProjection {
   latitude: number;
   longitude: number;
-  date_iso8601: string;
+  date_iso8601: Date;
   constellations: Constellation[];
   formatDate(): string;
+}
+
+export interface ISkyProjectionApiResponse {
+  latitude: number;
+  longitude: number;
+  date_iso8601: string;
+  constellations: Constellation[];
 }

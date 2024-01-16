@@ -1,17 +1,17 @@
-import { Constellation, ConstellationFigures, ISkyProjection } from "../index";
+import { Constellation, ConstellationFigures, ISkyProjection, ISkyProjectionApiResponse } from "../index";
 
 export class SkyProjection implements ISkyProjection {
   private constlFigures: ConstellationFigures;
   latitude: number;
   longitude: number;
-  date_iso8601: string;
+  date_iso8601: Date;
   constellations: Constellation[];
 
-  constructor(data: ISkyProjection, constlFigures: ConstellationFigures) {
+  constructor(data: ISkyProjectionApiResponse, constlFigures: ConstellationFigures) {
     this.constlFigures = constlFigures;
     this.latitude = data.latitude;
     this.longitude = data.longitude;
-    this.date_iso8601 = data.date_iso8601;
+    this.date_iso8601 = new Date(data.date_iso8601);
     this.constellations = data.constellations;
 
     this._cleanOrphanes();
