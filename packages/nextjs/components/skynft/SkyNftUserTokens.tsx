@@ -3,7 +3,7 @@ import { useAccount } from "wagmi";
 import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { SkyNftToken } from "./SkyNftToken";
 
-export const SkyNftTokenList = () => {
+export const SkyNftUserTokens = () => {
   const { address } = useAccount();
   const [tokenIndexes, setTokenIndexes] = useState<number[]>([]);
 

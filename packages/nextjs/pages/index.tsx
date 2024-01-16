@@ -1,15 +1,15 @@
 import type { NextPage } from "next";
 import { MetaHeader } from "~~/components/MetaHeader";
-import { SkyNftTokenList } from "~~/components/skynft/SkyNftTokenList";
-import { SkyNftCreator } from "~~/components/skynft/SkyNftCreator";
+import { SkyNftCreator, SkyNftUserTokens, SkyNftLatestTokens } from "~~/components/skynft";
 
 const Home: NextPage = () => {
   return (
     <>
       <MetaHeader />
       <div className="container mx-auto my-5">
-        <SkyNftTokenList />
+        <SkyNftUserTokens />
         <SkyNftCreator />
+        <SkyNftLatestTokens />
       </div>
     </>
   );

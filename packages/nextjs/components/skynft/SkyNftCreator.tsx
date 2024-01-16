@@ -106,7 +106,7 @@ export const SkyNftCreator = () => {
   return (
     <>
       <h2 className="text-2xl sm:text-3xl font-extrabold mb-4">Mint SkyNft</h2>
-      <div className="flex">
+      <div className="flex mb-10">
         <div className="w-1/2 p-2 h-96">
           <SkyNftLocationSelectorDynamic onLocationSelect={handleLocationSelect} />
         </div>
