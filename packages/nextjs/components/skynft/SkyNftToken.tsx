@@ -107,9 +107,8 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
             </CopyToClipboard>
           </span>
         </h2>
-        <p style={{ wordBreak: "break-all" }}>
-          {tokenData?.name} <address>{locationName}</address>
-        </p>
+        <p style={{ wordBreak: "break-all" }}>{tokenData?.name}</p>
+        {locationName ? <address>{locationName}</address> : ""}
       </div>
     </div>
   );
