@@ -1,3 +1,9 @@
+## Credits, Open-source licenses:
+
+* Scaffold-ETH 2 https://github.com/scaffold-eth/scaffold-eth-2 library/dapp template, MIT License, Copyright (c) 2023 BuidlGuidl
+* Hardhat template https://github.com/paulrberg/hardhat-template MIT License, Copyright (c) 2023 Paul Razvan Berg
+* ...
+
 # 🏗 Scaffold-ETH 2
 
 <h4 align="center">
