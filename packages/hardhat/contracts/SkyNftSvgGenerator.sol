@@ -2,15 +2,11 @@
 pragma solidity 0.8.20;
 
 import { ISvgGenerator } from "./interfaces/ISvgGenerator.sol";
-import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import "./lib/types.sol";
+import { SkyMap } from "./lib/types.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { SkyNftUtils } from "./lib/utils.sol";
 import { SkyNftSvgStarNames } from "./SkyNftSvgStarNames.sol";
 
-// import { console } from "hardhat/console.sol";
-
-/* prettier-ignore */
 /* solhint-disable-next-line */
 /*enum Constellations { Aql, And, Scl, Ara, Lib, Cet, Ari, Sct, Pyx, Boo, Cae, Cha, Cnc, Cap, Car, Cas,
         Cen, Cep, Com, CVn, Aur, Col, Cir, Crt, CrA, CrB, Crv, Cru, Cyg, Del, Dor, Dra, Nor, Eri, Sge, For,
@@ -46,7 +42,7 @@ contract SkyNftSvgGenerator is ISvgGenerator {
     error ConstellationsInputEmpty();
     error ConstellationsWrongBitmap(uint96 constlBitMap);
 
-    constructor(){
+    constructor() {
         // TODO: this can be defined much more cheap as bitmap
         constlFigures[0] = [7, 5, 5, 4, 5, 3, 3, 6, 8, 6, 3, 1, 1, 0, 3, 2];
         constlFigures[1] = [0, 1, 1, 4, 5, 4, 4, 3, 3, 2];
@@ -165,10 +161,9 @@ contract SkyNftSvgGenerator is ISvgGenerator {
         // prettier-ignore
         constlFigures[86] = [0,1,1,2,2,5,5,8,8,9,9,10,5,6,6,7,7,11,6,3,3,4,3,2];
         constlFigures[87] = [0, 1, 1, 2, 2, 4, 4, 6, 6, 9, 9, 8, 8, 7, 7, 5, 5, 3, 3, 0];
-
     }
 
-    function validateInput(uint96 constlBitMap, bytes calldata constlStarsBitMap) view external {
+    function validateInput(uint96 constlBitMap, bytes calldata constlStarsBitMap) external view {
         if (constlBitMap == 0 || constlStarsBitMap.length == 0) {
             revert ConstellationsInputEmpty();
         } else if (constlBitMap & uint96(0xFF << constlStarsCount.length) != 0) {
@@ -179,7 +174,6 @@ contract SkyNftSvgGenerator is ISvgGenerator {
         // uint32 private constant GEO_PRECISION = 10_000_000; // 7 decimal places
         // skyMap.latitude = int64(uint64(latitude)) - 90 * int64(GEO_PRECISION);
         // skyMap.longitude = int64(uint64(longitude)) - 180 * int64(GEO_PRECISION);
-
     }
 
     function _getSvgConstellations(SkyMap calldata skymap) private view returns (string memory svg) {
@@ -213,7 +207,7 @@ contract SkyNftSvgGenerator is ISvgGenerator {
             string memory stars = "";
             // init bounds, topLeft=Coords(CANVAS_WIDTH, CANVAS_HEIGHT), bottomRight=Coords(0,0)
             // then bounds will be adjusted
-            Bounds memory bounds = Bounds(Coords(CANVAS_WIDTH, CANVAS_HEIGHT), Coords(0,0));
+            Bounds memory bounds = Bounds(Coords(CANVAS_WIDTH, CANVAS_HEIGHT), Coords(0, 0));
 
             // 28 stars is max counts of stars in constellation
             uint256[28] memory drawnStars;
@@ -225,14 +219,17 @@ contract SkyNftSvgGenerator is ISvgGenerator {
                     continue;
                 }
                 // if first pair, or pair 1st star != prev. pair last star, move cursor to new position
-                if (!started || constlStars[constlFigures[i][k-1]].coords.x != constlStars[pairFirstStarIndex].coords.x
-                    || constlStars[constlFigures[i][k-1]].coords.y != constlStars[pairFirstStarIndex].coords.y) {
+                if (
+                    !started ||
+                    constlStars[constlFigures[i][k - 1]].coords.x != constlStars[pairFirstStarIndex].coords.x ||
+                    constlStars[constlFigures[i][k - 1]].coords.y != constlStars[pairFirstStarIndex].coords.y
+                ) {
                     started = true;
                     string memory x = constlStars[pairFirstStarIndex].coords.x.toStringSigned();
                     string memory y = constlStars[pairFirstStarIndex].coords.y.toStringSigned();
-                    path = string.concat(path, "M",x, " ",y);
+                    path = string.concat(path, "M", x, " ", y);
                     if (drawnStars[pairFirstStarIndex] != 1) {
-                        stars=string.concat(stars,'<use href="#s" x="',x,'" y="',y,'"/>');
+                        stars = string.concat(stars, '<use href="#s" x="', x, '" y="', y, '"/>');
                         drawnStars[pairFirstStarIndex] = 1;
                     }
                     bounds = _adjustBounds(bounds, constlStars[pairFirstStarIndex].coords);
@@ -240,27 +237,32 @@ contract SkyNftSvgGenerator is ISvgGenerator {
 
                 bounds = _adjustBounds(bounds, constlStars[pairSecondStarIndex].coords);
                 if (drawnStars[pairSecondStarIndex] != 1) {
-                    stars=string.concat(stars,'<use href="#s" x="',
-                        constlStars[pairSecondStarIndex].coords.x.toStringSigned(),'" y="',
-                        constlStars[pairSecondStarIndex].coords.y.toStringSigned(),'"/>');
+                    stars = string.concat(
+                        stars,
+                        '<use href="#s" x="',
+                        constlStars[pairSecondStarIndex].coords.x.toStringSigned(),
+                        '" y="',
+                        constlStars[pairSecondStarIndex].coords.y.toStringSigned(),
+                        '"/>'
+                    );
                     drawnStars[pairSecondStarIndex] = 1;
                 }
 
                 int16 dx = constlStars[pairSecondStarIndex].coords.x - constlStars[pairFirstStarIndex].coords.x;
                 int16 dy = constlStars[pairSecondStarIndex].coords.y - constlStars[pairFirstStarIndex].coords.y;
-                path = string.concat(
-                    path,
-                    "l",
-                    dx.toStringSigned(),
-                    " ",
-                    dy.toStringSigned()
-                );
+                path = string.concat(path, "l", dx.toStringSigned(), " ", dy.toStringSigned());
             }
 
             if (bytes(stars).length > 0) {
-                svg = string.concat(svg, '<g class="cstl">', 
+                svg = string.concat(
+                    svg,
+                    '<g class="cstl">',
                     _getConstlNameText(i, bounds),
-                    path, "'/>",stars,'</g>\n');
+                    path,
+                    "'/>",
+                    stars,
+                    "</g>\n"
+                );
             }
 
             // now increase constlInputIndex, it will be used for next visible constellation;
@@ -268,34 +270,50 @@ contract SkyNftSvgGenerator is ISvgGenerator {
         }
     }
 
-    function getSvg(uint256 tokenId,SkyMap calldata skymap) external view returns (string memory svgXml, string memory tokenName) {
+    function getSvg(
+        uint256 tokenId,
+        SkyMap calldata skymap
+    ) external view returns (string memory svgXml, string memory tokenName) {
         string memory coords = SkyNftUtils.getCoords(tokenId);
         string memory datetime = SkyNftUtils.getDateTime(tokenId);
         string memory halfW = Strings.toStringSigned(CANVAS_WIDTH / 2);
         string memory halfH = Strings.toStringSigned(CANVAS_HEIGHT / 2);
-        string memory bottomArcPath = string.concat('<path id="arcb" d="M0 ',halfH,'A',halfW,' ',
-            halfH,' 0 0 0 ',CANVAS_WIDTH.toStringSigned(),' ',halfH,'" fill="none"/>');
+        string memory bottomArcPath = string.concat(
+            '<path id="arcb" d="M0 ',
+            halfH,
+            "A",
+            halfW,
+            " ",
+            halfH,
+            " 0 0 0 ",
+            CANVAS_WIDTH.toStringSigned(),
+            " ",
+            halfH,
+            '" fill="none"/>'
+        );
         svgXml = string.concat(
             '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMinYMin meet" viewBox="0 0 ',
-            CANVAS_WIDTH.toStringSigned()," ",CANVAS_HEIGHT.toStringSigned(),
+            CANVAS_WIDTH.toStringSigned(),
+            " ",
+            CANVAS_HEIGHT.toStringSigned(),
             // .st r:5px does not work on some svg renderers, so put it into <circle>
             '"><style><![CDATA[svg{background:#0A0A23}'
-            'text{text-anchor:middle;dominant-baseline:middle;font-family:Verdana;}'
-            'g.s1 text{font-size:16px;fill:#FFF;transform:translateY(-15px);display:none}'
+            "text{text-anchor:middle;dominant-baseline:middle;font-family:Verdana;}"
+            "g.s1 text{font-size:16px;fill:#FFF;transform:translateY(-15px);display:none}"
             'g.s1 use[href="#s1"]{fill:#FFF;cursor:crosshair}'
-            'g.s1:hover text{display:block}'
+            "g.s1:hover text{display:block}"
             '.cstl text,.cstl use[href="#s"]{fill:#8A8AB5;transition:fill 0.3s}'
-            '.cstl text{font-size:17px}'
-            '.cstl path{stroke:#8A8AB5;stroke-width:1px;fill-opacity:0;'
-            'filter:url(#glow);transition:stroke 0.3s,stroke-width 0.3s}'
-            '.cstl:hover{cursor:pointer}'
+            ".cstl text{font-size:17px}"
+            ".cstl path{stroke:#8A8AB5;stroke-width:1px;fill-opacity:0;"
+            "filter:url(#glow);transition:stroke 0.3s,stroke-width 0.3s}"
+            ".cstl:hover{cursor:pointer}"
             '.cstl:hover text,.cstl:hover use[href="#s"]{fill:#d0d0f5;font-weight:bold}'
-            '.cstl:hover path{stroke-dasharray:none;stroke:#d0d0f5;stroke-width:2px}'
-            '.circ {fill:transparent;stroke:#f5e0d0;stroke-width:2%;pointer-events:none}'
-            '.ln,.le,.ls,.lw{fill:#000;font-weight:bold;font-size:20px}'
-            '.ln{transform:translateY(12px)}.ls{transform:translateY(-8px)}'
-            '.lw{transform:translateX(10px)}.le{transform:translateX(-10px)}'
-            'text.arcb{transform:translateY(-12px);letter-spacing:1px;font-size:18px;fill: #000;}'
+            ".cstl:hover path{stroke-dasharray:none;stroke:#d0d0f5;stroke-width:2px}"
+            ".circ {fill:transparent;stroke:#f5e0d0;stroke-width:2%;pointer-events:none}"
+            ".ln,.le,.ls,.lw{fill:#000;font-weight:bold;font-size:20px}"
+            ".ln{transform:translateY(12px)}.ls{transform:translateY(-8px)}"
+            ".lw{transform:translateX(10px)}.le{transform:translateX(-10px)}"
+            "text.arcb{transform:translateY(-12px);letter-spacing:1px;font-size:18px;fill: #000;}"
             ']]></style><defs><filter id="glow">'
             '<feGaussianBlur in="SourceGraphic" stdDeviation="5" result="blur2" />'
             '<feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur4" />'
@@ -316,13 +334,16 @@ contract SkyNftSvgGenerator is ISvgGenerator {
             _getBottomArcText(datetime, 75),
             "</svg>"
         );
-        tokenName = string.concat(coords, ' ', datetime);
+        tokenName = string.concat(coords, " ", datetime);
     }
 
     function _getBottomArcText(string memory text, uint256 offsetPercent) private pure returns (string memory code) {
         code = string.concat(
             '<text class="arcb"><textPath href="#arcb" startOffset="',
-            Strings.toString(offsetPercent), '%">', text, '</textPath></text>'
+            Strings.toString(offsetPercent),
+            '%">',
+            text,
+            "</textPath></text>"
         );
     }
 
@@ -344,12 +365,7 @@ contract SkyNftSvgGenerator is ISvgGenerator {
         }
     }
 
-    function supportsInterface(bytes4 interfaceId)
-        external
-        pure
-        override
-        returns (bool)
-    {
+    function supportsInterface(bytes4 interfaceId) external pure override returns (bool) {
         return interfaceId == type(ISvgGenerator).interfaceId;
     }
 
@@ -362,25 +378,110 @@ contract SkyNftSvgGenerator is ISvgGenerator {
         return bounds;
     }
 
-    function _getConstlNameText(uint8 constlIndex, Bounds memory bounds) private pure returns (string memory constlNameText) {
-        bytes24[88] memory constlNames = [bytes24("Aquila"),"Andromeda","Sculptor","Ara","Libra",
-            "Cetus","Aries","Scutum","Pyxis","Bootes","Caelum","Chamaeleon","Cancer","Capricornus",
-            "Carina","Cassiopeia","Centaurus","Cepheus",
-            "Coma Berenices","Canes Venatici","Auriga","Columba","Circinus","Crater","Corona Australis",
-            "Corona Borealis","Corvus","Crux","Cygnus","Delphinus","Dorado","Draco"	,"Norma","Eridanus",
-            "Sagitta","Fornax","Gemini","Camelopardalis","Canis Major","Ursa Major","Grus","Hercules",
-            "Horologium","Hydra","Hydrus","Indus","Lacerta","Monoceros","Lepus","Leo","Lupus","Lynx","Lyra",
-            "Antlia","Microscopium","Musca","Octans","Apus","Ophiuchus","Orion","Pavo","Pegasus","Pictor",
-            "Perseus","Equuleus","Canis Minor","Leo Minor","Vulpecula","Ursa Minor","Phoenix","Pisces",
-            "Piscis Austrinus","Volans","Puppis","Reticulum","Sagittarius","Scorpius","Serpens",
-            "Sextans","Mensa","Taurus","Telescopium","Tucana","Triangulum","Triangulum Australe","Aquarius",
-            "Virgo","Vela"];
+    function _getConstlNameText(
+        uint8 constlIndex,
+        Bounds memory bounds
+    ) private pure returns (string memory constlNameText) {
+        bytes24[88] memory constlNames = [
+            bytes24("Aquila"),
+            "Andromeda",
+            "Sculptor",
+            "Ara",
+            "Libra",
+            "Cetus",
+            "Aries",
+            "Scutum",
+            "Pyxis",
+            "Bootes",
+            "Caelum",
+            "Chamaeleon",
+            "Cancer",
+            "Capricornus",
+            "Carina",
+            "Cassiopeia",
+            "Centaurus",
+            "Cepheus",
+            "Coma Berenices",
+            "Canes Venatici",
+            "Auriga",
+            "Columba",
+            "Circinus",
+            "Crater",
+            "Corona Australis",
+            "Corona Borealis",
+            "Corvus",
+            "Crux",
+            "Cygnus",
+            "Delphinus",
+            "Dorado",
+            "Draco",
+            "Norma",
+            "Eridanus",
+            "Sagitta",
+            "Fornax",
+            "Gemini",
+            "Camelopardalis",
+            "Canis Major",
+            "Ursa Major",
+            "Grus",
+            "Hercules",
+            "Horologium",
+            "Hydra",
+            "Hydrus",
+            "Indus",
+            "Lacerta",
+            "Monoceros",
+            "Lepus",
+            "Leo",
+            "Lupus",
+            "Lynx",
+            "Lyra",
+            "Antlia",
+            "Microscopium",
+            "Musca",
+            "Octans",
+            "Apus",
+            "Ophiuchus",
+            "Orion",
+            "Pavo",
+            "Pegasus",
+            "Pictor",
+            "Perseus",
+            "Equuleus",
+            "Canis Minor",
+            "Leo Minor",
+            "Vulpecula",
+            "Ursa Minor",
+            "Phoenix",
+            "Pisces",
+            "Piscis Austrinus",
+            "Volans",
+            "Puppis",
+            "Reticulum",
+            "Sagittarius",
+            "Scorpius",
+            "Serpens",
+            "Sextans",
+            "Mensa",
+            "Taurus",
+            "Telescopium",
+            "Tucana",
+            "Triangulum",
+            "Triangulum Australe",
+            "Aquarius",
+            "Virgo",
+            "Vela"
+        ];
 
-        return string.concat('<text x="',
-            ((bounds.topLeft.x + bounds.bottomRight.x) / 2).toStringSigned(),
-            '" y="',
-            ((bounds.topLeft.y + bounds.bottomRight.y) / 2).toStringSigned(),
-            '">',SkyNftUtils.bytesToString(constlNames[constlIndex]),'</text>');
+        return
+            string.concat(
+                '<text x="',
+                ((bounds.topLeft.x + bounds.bottomRight.x) / 2).toStringSigned(),
+                '" y="',
+                ((bounds.topLeft.y + bounds.bottomRight.y) / 2).toStringSigned(),
+                '">',
+                SkyNftUtils.bytesToString(constlNames[constlIndex]),
+                "</text>"
+            );
     }
-
 }

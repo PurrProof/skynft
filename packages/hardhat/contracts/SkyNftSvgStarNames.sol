@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
-import "./lib/types.sol";
+import { SkyMap } from "./lib/types.sol";
 import { SkyNftUtils } from "./lib/utils.sol";
 import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 

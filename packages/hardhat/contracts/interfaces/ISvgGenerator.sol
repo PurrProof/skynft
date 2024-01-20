@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
-import "../lib/types.sol";
+import { SkyMap } from "../lib/types.sol";
 
 interface ISvgGenerator is IERC165 {
     function getSvg(

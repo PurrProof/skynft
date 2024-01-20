@@ -5,15 +5,12 @@ import { ERC721 } from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import { IERC165 } from "@openzeppelin/contracts/utils/introspection/IERC165.sol";
 import { ERC721Enumerable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Enumerable.sol";
 import { ERC721Pausable } from "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol";
-import { Strings } from "@openzeppelin/contracts/utils/Strings.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
 import { ReentrancyGuard } from "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/interfaces/draft-IERC6093.sol";
-//import { console } from "hardhat/console.sol";
 import { Base64 } from "@openzeppelin/contracts/utils/Base64.sol";
 import { ISvgGenerator } from "./interfaces/ISvgGenerator.sol";
 import { IPausable } from "./interfaces/IPausable.sol";
-import "./lib/types.sol";
+import { SkyMap } from "./lib/types.sol";
 contract SkyNft is Ownable, ERC721, ERC721Enumerable, IPausable, ERC721Pausable, ReentrancyGuard {
     // tokenId consists of encoded lat/lon/datetime
     mapping(uint256 tokenId => SkyMap skyMap) private skyMaps;

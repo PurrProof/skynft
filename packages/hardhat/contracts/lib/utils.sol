@@ -94,7 +94,7 @@ library SkyNftUtils {
     }
 
     function _extractBits(uint32 value, uint8 startBit, uint8 endBit) private pure returns (uint32) {
-        require(startBit < endBit, "Start bit must be less than end bit");
+        require(startBit < endBit, "Start bit must be less than last");
         require(endBit < 32, "End bit must be less than 32");
 
         // Shift right by the start bit
@@ -118,7 +118,7 @@ library SkyNftUtils {
         bytes memory padding = new bytes(paddingNeeded);
         bytes memory padCharBytes = bytes(padChar);
 
-        require(padCharBytes.length == 1, "padChar must be a single character");
+        require(padCharBytes.length == 1, "padChar must be a single char");
 
         for (uint32 i = 0; i < paddingNeeded; i++) {
             padding[i] = padCharBytes[0];
