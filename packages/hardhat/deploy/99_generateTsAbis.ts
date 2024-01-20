@@ -5,10 +5,9 @@
  * These definitions are used to derive the types needed in the custom scaffold-eth hooks, for example.
  * This script should run as the last deploy script.
  */
-
 import * as fs from "fs";
-import prettier from "prettier";
 import { DeployFunction } from "hardhat-deploy/types";
+import prettier from "prettier";
 
 const generatedContractComment = `
 /**
@@ -23,15 +22,15 @@ const ARTIFACTS_DIR = "./artifacts";
 function getDirectories(path: string) {
   return fs
     .readdirSync(path, { withFileTypes: true })
-    .filter(dirent => dirent.isDirectory())
-    .map(dirent => dirent.name);
+    .filter((dirent) => dirent.isDirectory())
+    .map((dirent) => dirent.name);
 }
 
 function getContractNames(path: string) {
   return fs
     .readdirSync(path, { withFileTypes: true })
-    .filter(dirent => dirent.isFile() && dirent.name.endsWith(".json"))
-    .map(dirent => dirent.name.split(".")[0]);
+    .filter((dirent) => dirent.isFile() && dirent.name.endsWith(".json"))
+    .map((dirent) => dirent.name.split(".")[0]);
 }
 
 function getActualSourcesForContract(sources: Record<string, any>, contractName: string) {
@@ -45,7 +44,7 @@ function getActualSourcesForContract(sources: Record<string, any>, contractName:
       if (match) {
         const inheritancePart = match[2];
         // Split the inherited contracts by commas to get the list of inherited contracts
-        const inheritedContracts = inheritancePart.split(",").map(contract => `${contract.trim()}.sol`);
+        const inheritedContracts = inheritancePart.split(",").map((contract) => `${contract.trim()}.sol`);
 
         return inheritedContracts;
       }
@@ -60,7 +59,7 @@ function getInheritedFunctions(sources: Record<string, any>, contractName: strin
   const inheritedFunctions = {} as Record<string, any>;
 
   for (const sourceContractName of actualSources) {
-    const sourcePath = Object.keys(sources).find(key => key.includes(`/${sourceContractName}`));
+    const sourcePath = Object.keys(sources).find((key) => key.includes(`/${sourceContractName}`));
     if (sourcePath) {
       const sourceName = sourcePath?.split("/").pop()?.split(".sol")[0];
       const { abi } = JSON.parse(fs.readFileSync(`${ARTIFACTS_DIR}/${sourcePath}/${sourceName}.json`).toString());
@@ -112,7 +111,7 @@ const generateTsAbis: DeployFunction = async function () {
   }
   fs.writeFileSync(
     `${TARGET_DIR}deployedContracts.ts`,
-    prettier.format(
+    await prettier.format(
       `${generatedContractComment} import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract"; \n\n
  const deployedContracts = {${fileContent}} as const; \n\n export default deployedContracts satisfies GenericContractsDeclaration`,
       {
