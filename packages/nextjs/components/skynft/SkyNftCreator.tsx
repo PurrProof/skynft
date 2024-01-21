@@ -1,11 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
-import dynamic from "next/dynamic";
 import axios from "axios";
 import { useAccount } from "wagmi";
 import { parseEther } from "viem";
 import { useScaffoldContractWrite, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { ConstellationFigures, SkyProjection, SkyProjectionPacker, StarNames } from "@SkyNft/sdk";
 import scaffoldConfig from "~~/scaffold.config";
+import { SkyNftLocationSelectorDyn } from "./SkyNftLocationSelectorDyn";
 
 const starNames = new StarNames();
 const constlFigures = new ConstellationFigures();
@@ -16,12 +16,6 @@ export const SkyNftCreator = () => {
   ////CHECK WETHER CONNECTED
   const account = useAccount();
   ////////////////const skyProjection = new SkyProjection(apiResponse, constlFigures);
-
-  const areEqual = (prevProps, nextProps) => true;
-  const SkyNftLocationSelectorDynamic = React.memo(
-    dynamic(() => import("./SkyNftLocationSelector"), { ssr: false }),
-    areEqual,
-  );
 
   const [coordinates, setCoordinates] = useState(null);
   const [dateTime, setDateTime] = useState("");
@@ -108,7 +102,7 @@ export const SkyNftCreator = () => {
       <h2 className="text-2xl sm:text-3xl font-extrabold mb-4">Mint SkyNft</h2>
       <div className="flex mb-10">
         <div className="w-1/2 p-2 h-96">
-          <SkyNftLocationSelectorDynamic onLocationSelect={handleLocationSelect} />
+          <SkyNftLocationSelectorDyn onLocationSelect={handleLocationSelect} />
         </div>
         <div className="w-1/2 p-2 flex flex-col">
           <div className="form-control w-full max-w-xs">
