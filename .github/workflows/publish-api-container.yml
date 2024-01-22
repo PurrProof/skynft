@@ -35,7 +35,9 @@ jobs:
         context: packages/api
         file: packages/api/deploy/Dockerfile
         push: true
-        tags: ghcr.io/${{ env.REPO_NAME_LOWERCASE }}/skynftapi:${{ github.sha }}
-
+        tags: |
+          ghcr.io/${{ env.REPO_NAME_LOWERCASE }}/skynftapi:${{ github.sha }}
+          ghcr.io/${{ env.REPO_NAME_LOWERCASE }}/skynftapi:latest
+          
     - name: Logout from GitHub Container Registry
       run: docker logout ghcr.io
