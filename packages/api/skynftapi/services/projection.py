@@ -3,7 +3,7 @@ from typing import List
 
 import metomi.isodatetime.parsers as parse
 import numpy as np
-from skyfield.api import Star, load, load_file, wgs84
+from skyfield.api import Star, load, load_file, wgs84, Loader
 from skyfield.data import hipparcos, stellarium
 from skyfield.projections import build_stereographic_projection
 
@@ -51,8 +51,9 @@ class SkyProjection:
         ts = load.timescale()
         time = ts.utc(year, month, day, hour, minute)
 
-        # Load ephemeris dataload = load.create_loader('./downloads')
-        self.ephemeris = load_file("downloads/de406.bsp")
+        # https://ssd.jpl.nasa.gov/ftp/eph/planets/bsp/de406.bsp
+        myload = Loader("./downloads")  # Create a loader with a custom download directory
+        self.ephemeris = myload("de406.bsp")
         self.earth = self.ephemeris["earth"]
 
         # Load star data
