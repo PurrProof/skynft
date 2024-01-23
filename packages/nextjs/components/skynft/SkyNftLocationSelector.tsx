@@ -1,17 +1,17 @@
-import React, { useState, createRef, RefObject } from "react";
+import React, { createRef, RefObject } from "react";
 import { MapContainer, useMapEvents, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { LeafletMouseEvent } from "leaflet";
 
 const SkyNftLocationSelector = ({ onLocationSelect }) => {
   const mapRef: RefObject<L.Map> = createRef();
-  const [mapReady, setMapReady] = useState(false);
+  //const [mapReady, setMapReady] = useState(false);
 
   return (
     <MapContainer
       ref={mapRef}
       whenReady={() => {
-        setMapReady(true);
+        //setMapReady(true);
       }}
       scrollWheelZoom={false}
       center={[40.4378373, -3.8443427]}

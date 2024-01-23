@@ -41,7 +41,7 @@ export const SkyNftCreator = () => {
     watch: tokenId != null, // Only watch and update when tokenId is not null
   });
 
-  const { writeAsync, isLoading1 } = useScaffoldContractWrite({
+  const { writeAsync } = useScaffoldContractWrite({
     contractName: "SkyNft",
     functionName: "mint",
     args: [],
