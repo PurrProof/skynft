@@ -1,9 +1,22 @@
 import React, { createRef, RefObject } from "react";
 import { MapContainer, useMapEvents, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { LeafletMouseEvent } from "leaflet";
+import { LeafletMouseEvent, LatLng } from "leaflet";
 
-const SkyNftLocationSelector = ({ onLocationSelect }) => {
+interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
+interface SkyNftLocationSelectorProps {
+  onLocationSelect: (param: Coordinates) => void;
+}
+
+interface MyComponentProps {
+  onLocationFound: (location: LatLng) => void;
+}
+
+const SkyNftLocationSelector: React.FC<SkyNftLocationSelectorProps> = ({ onLocationSelect }) => {
   const mapRef: RefObject<L.Map> = createRef();
   //const [mapReady, setMapReady] = useState(false);
 
@@ -27,7 +40,7 @@ const SkyNftLocationSelector = ({ onLocationSelect }) => {
   );
 };
 
-function MyComponent({ onLocationFound }) {
+function MyComponent({ onLocationFound }: MyComponentProps) {
   useMapEvents({
     click: (e: LeafletMouseEvent) => {
       onLocationFound(e.latlng);

@@ -7,7 +7,7 @@ interface ShadowSvgProps {
 }
 
 const ShadowSvg = ({ svgContent, width, height }: ShadowSvgProps) => {
-  const containerRef = useRef(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (containerRef.current) {

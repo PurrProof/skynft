@@ -15,12 +15,14 @@
     "clean:all": "rimraf ./artifacts ./cache ./coverage ./types ./coverage.json ./node_modules ./contracts/deployedContracts.ts"
   },
   "dependencies": {
-    "@SkyNft/sdk": "^0.1.0",
+    "@SkyNft/sdk": "workspace:*",
     "@ethersproject/providers": "^5.7.2",
     "@heroicons/react": "^2.0.11",
     "@rainbow-me/rainbowkit": "1.3.0",
     "@uniswap/sdk-core": "^4.0.1",
     "@uniswap/v2-sdk": "^3.0.1",
+    "@wagmi/core": "1.4.13",
+    "abitype": "^1.0.0",
     "axios": "^1.6.5",
     "blo": "^1.0.1",
     "daisyui": "^4.4.19",
@@ -36,7 +38,7 @@
     "use-debounce": "^8.0.4",
     "usehooks-ts": "^2.7.2",
     "viem": "1.19.9",
-    "wagmi": "1.4.12",
+    "wagmi": "1.4.13",
     "zustand": "^4.1.2"
   },
   "devDependencies": {
@@ -58,6 +60,6 @@
     "ts-loader": "^9.5.1",
     "type-fest": "^4.6.0",
     "typescript": "^5.1.6",
-    "vercel": "^28.15.1"
+    "vercel": "^33.2.0"
   }
 }

@@ -3,6 +3,8 @@ import { useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import ShadowSvg from "./ShadowSvg";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import { DocumentDuplicateIcon } from "@heroicons/react/24/outline";
+import { Address } from "viem";
+import { UseScaffoldReadConfig } from "~~/utils/scaffold-eth/contract";
 
 interface SkyNftTokenProps {
   ownerAddress: string;
@@ -10,19 +12,27 @@ interface SkyNftTokenProps {
 }
 
 export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
-  const [tokenId, setTokenId] = useState<number | null>(null);
+  const [tokenId, setTokenId] = useState<bigint | undefined>(undefined);
   const [tokenData, setTokenData] = useState<any>(null);
   const [locationName, setLocationName] = useState("");
 
-  const funcName = ownerAddress == "" ? "tokenByIndex" : "tokenOfOwnerByIndex";
-  const args = ownerAddress == "" ? [index] : [ownerAddress, index];
-
-  const { data, isLoading } = useScaffoldContractRead({
+  const params1: UseScaffoldReadConfig<"SkyNft", "tokenByIndex"> = {
     contractName: "SkyNft",
-    functionName: funcName,
-    args: args,
+    functionName: "tokenByIndex",
+    args: [BigInt(index)],
     watch: true,
-  });
+  };
+
+  const params2: UseScaffoldReadConfig<"SkyNft", "tokenOfOwnerByIndex"> = {
+    contractName: "SkyNft",
+    functionName: "tokenOfOwnerByIndex",
+    args: [ownerAddress as Address, BigInt(index)],
+    watch: true,
+  };
+
+  const readConfig = ownerAddress === "" ? params1 : params2;
+
+  const { data, isLoading } = useScaffoldContractRead(readConfig);
 
   const { data: tokenUri } = useScaffoldContractRead({
     contractName: "SkyNft",
@@ -33,7 +43,7 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
 
   useEffect(() => {
     if (data) {
-      setTokenId(data.toString());
+      setTokenId(BigInt(data.toString()));
     }
   }, [data]);
 
@@ -61,7 +71,7 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
     }
   }, [tokenData]);
 
-  const fetchLocationName = async (latitude, longitude) => {
+  const fetchLocationName = async (latitude: number, longitude: number) => {
     try {
       // Nominatim API endpoint for reverse geocoding
       const response = await fetch(
@@ -82,7 +92,7 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
     return <div>Loading token...</div>;
   }
 
-  const svgContent = tokenData ? Buffer.from(tokenData.image.split(",")[1], "base64") : "";
+  const svgContent = tokenData ? Buffer.from(tokenData.image.split(",")[1], "base64").toString() : "";
   const blob = new Blob([svgContent], { type: "image/svg+xml" });
   const url = URL.createObjectURL(blob);
 
@@ -97,9 +107,9 @@ export const SkyNftToken = ({ ownerAddress, index }: SkyNftTokenProps) => {
       </figure>
       <div className="card-body">
         <h2 className="card-title" style={{ wordBreak: "break-all" }}>
-          Token #{tokenId}
+          Token #{tokenId ? tokenId.toString() : ""}
           <span>
-            <CopyToClipboard text={tokenId}>
+            <CopyToClipboard text={tokenId ? tokenId.toString() : ""}>
               <DocumentDuplicateIcon
                 className="ml-1.5 text-xl font-normal text-sky-600 h-5 w-5 cursor-pointer"
                 aria-hidden="true"

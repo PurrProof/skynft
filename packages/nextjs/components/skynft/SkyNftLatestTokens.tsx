@@ -8,14 +8,14 @@ export const SkyNftLatestTokens = () => {
   const { data: totalSupply } = useScaffoldContractRead({
     contractName: "SkyNft",
     functionName: "totalSupply",
-    args: [],
+    args: undefined,
     watch: true,
   });
 
   useEffect(() => {
     setTokenIndexes([]);
     const N = 5;
-    const newTokenIndexes = totalSupply ? [...Array(parseInt(totalSupply)).keys()].slice(-N).reverse() : [];
+    const newTokenIndexes = totalSupply ? [...Array(parseInt(totalSupply.toString())).keys()].slice(-N).reverse() : [];
     setTokenIndexes(newTokenIndexes);
   }, [totalSupply]);
 

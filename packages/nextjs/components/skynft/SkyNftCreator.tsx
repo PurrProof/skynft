@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import { useAccount } from "wagmi";
-import { parseEther } from "viem";
+import { parseEther, Address } from "viem";
 import { useScaffoldContractWrite, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
 import { ConstellationFigures, SkyProjection, SkyProjectionPacker, StarNames } from "@SkyNft/sdk";
 import scaffoldConfig from "~~/scaffold.config";
@@ -11,13 +11,18 @@ const starNames = new StarNames();
 const constlFigures = new ConstellationFigures();
 const packer = new SkyProjectionPacker(constlFigures, starNames);
 
+interface Coordinates {
+  lat: number;
+  lng: number;
+}
+
 export const SkyNftCreator = () => {
   ////////////////////
   ////CHECK WETHER CONNECTED
   const account = useAccount();
   ////////////////const skyProjection = new SkyProjection(apiResponse, constlFigures);
 
-  const [coordinates, setCoordinates] = useState(null);
+  const [coordinates, setCoordinates] = useState<Coordinates | null>(null);
   const [dateTime, setDateTime] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -37,21 +42,21 @@ export const SkyNftCreator = () => {
   const { data: ownerOfData, isError: isOwnerOfError } = useScaffoldContractRead({
     contractName: "SkyNft",
     functionName: "ownerOf",
-    args: [tokenId],
+    args: [tokenId ?? undefined],
     watch: tokenId != null, // Only watch and update when tokenId is not null
   });
 
   const { writeAsync } = useScaffoldContractWrite({
     contractName: "SkyNft",
     functionName: "mint",
-    args: [],
+    args: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
     value: parseEther("0"),
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);
     },
   });
 
-  const handleLocationSelect = location => {
+  const handleLocationSelect = (location: Coordinates) => {
     setCoordinates(location);
   };
 
@@ -81,9 +86,20 @@ export const SkyNftCreator = () => {
         throw new Error("Invalid response from server");
       }
       const skyProjection = new SkyProjection(response.data, constlFigures);
+      const packedData = packer.pack(skyProjection);
+
       writeAsync({
-        args: [account.address, ...packer.pack(skyProjection)],
+        args: [
+          account.address as Address,
+          packedData[0],
+          packedData[1],
+          packedData[2] as Address,
+          packedData[3],
+          packedData[4],
+          packedData[5],
+        ],
       });
+
       //here we have correct response
       //so I need state to be updated and then wryteAsync func recreated based on new args
     } catch (e) {

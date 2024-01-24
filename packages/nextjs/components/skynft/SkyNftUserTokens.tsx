@@ -19,7 +19,7 @@ export const SkyNftUserTokens = () => {
     setTokenIndexes([]);
 
     if (address) {
-      const newTokenIndexes = balance ? [...Array(parseInt(balance)).keys()] : [];
+      const newTokenIndexes = balance ? [...Array(parseInt(balance.toString())).keys()] : [];
       setTokenIndexes(newTokenIndexes);
     }
   }, [address, balance]);
@@ -32,7 +32,7 @@ export const SkyNftUserTokens = () => {
       ) : (
         <div className="flex flex-row gap-5">
           {tokenIndexes.map(index => (
-            <SkyNftToken key={index} ownerAddress={address} index={index} />
+            <SkyNftToken key={index} ownerAddress={address ? address : ""} index={index} />
           ))}
         </div>
       )}
