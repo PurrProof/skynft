@@ -86,7 +86,7 @@ export const Header = () => {
             <Image alt="logo" className="cursor-pointer" fill src="/logo.svg" />
           </div>
           <div className="flex flex-col">
-            <span className="font-bold leading-tight">SkyMap NFT</span>
+            <span className="font-bold leading-tight">SkyMap NFT!</span>
             <span className="text-xs">Your historical skymap</span>
           </div>
         </Link>
