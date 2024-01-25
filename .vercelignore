@@ -1,11 +1,2 @@
-# ignore all directories
-**
-
-# except the specific directories you want to deploy
-!packages/nextjs
-!packages/sdk
-
-# ignore specific files or directories within the included directories
-packages/nextjs/node_modules
-packages/nextjs/.next
-packages/sdk/node_modules
+packages/hardhat
+packages/api
