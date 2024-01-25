@@ -2,6 +2,7 @@
   "name": "SkyNft",
   "version": "0.0.1",
   "private": true,
+  "packageManager": "pnpm@8.14.0",
   "scripts": {
     "account": "pnpm --filter @SkyNft/hardhat account",
     "chain": "pnpm --filter @SkyNft/hardhat chain",

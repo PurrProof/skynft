@@ -145,7 +145,7 @@ importers:
   packages/nextjs:
     dependencies:
       '@SkyNft/sdk':
-        specifier: workspace:^0.1.0
+        specifier: workspace:*
         version: link:../sdk
       '@ethersproject/providers':
         specifier: ^5.7.2
