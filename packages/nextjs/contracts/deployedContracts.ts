@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Greeter: {
-      address: "0x809d550fca64d94Bd9F66E60752A544199cfAC3D",
+      address: "0x2bdCC0de6bE1f7D2ee689a0342D76F52E8EFABa3",
       abi: [
         {
           inputs: [
@@ -75,7 +75,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     SkyNft: {
-      address: "0x36C02dA8a0983159322a80FFE9F24b1acfF8B570",
+      address: "0xCD8a1C3ba11CF5ECfa6267617243239504a98d90",
       abi: [
         {
           inputs: [
@@ -850,7 +850,7 @@ const deployedContracts = {
       },
     },
     SkyNftSvgGenerator: {
-      address: "0x5eb3Bc0a489C5A8288765d2336659EbCA68FCd00",
+      address: "0xb7278A61aa25c888815aFC32Ad3cC52fF24fE575",
       abi: [
         {
           inputs: [],
@@ -974,7 +974,7 @@ const deployedContracts = {
       },
     },
     SkyNftSvgStarNames: {
-      address: "0x9d4454B023096f34B160D6B654540c56A1F81688",
+      address: "0x5f3f1dBD7B74C6B46e8c44f98792A1dAf8d69154",
       abi: [
         {
           inputs: [
@@ -1026,7 +1026,7 @@ const deployedContracts = {
       inheritedFunctions: {},
     },
     YourContract: {
-      address: "0x8f86403A4DE0BB5791fa46B8e795C547942fE4Cf",
+      address: "0x82e01223d51Eb87e16A03E24687EDF0F294da6f1",
       abi: [
         {
           inputs: [
