@@ -62,7 +62,7 @@ contract SkyNft is Ownable, ERC721, ERC721Enumerable, IPausable, ERC721Pausable,
         _safeMint(recipient, newTokenId);
     }
 
-    function tokenURI(uint256 tokenId) public view override returns (string memory uri) {
+    function tokenURI(uint256 tokenId) public view override whenNotPaused returns (string memory uri) {
         if (skyMaps[tokenId].constlBitMap == 0) {
             revert ERC721NonexistentToken(tokenId);
         }
