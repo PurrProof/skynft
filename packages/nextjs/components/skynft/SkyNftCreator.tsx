@@ -49,7 +49,7 @@ export const SkyNftCreator = () => {
   const { writeAsync } = useScaffoldContractWrite({
     contractName: "SkyNft",
     functionName: "mint",
-    args: [undefined, undefined, undefined, undefined, undefined, undefined, undefined],
+    args: [account.address as Address, 0n, 0n, "" as Address, 0n, [], []],
     value: parseEther("0"),
     onBlockConfirmation: txnReceipt => {
       console.log("📦 Transaction blockHash", txnReceipt.blockHash);

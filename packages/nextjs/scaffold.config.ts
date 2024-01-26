@@ -40,7 +40,7 @@ const scaffoldConfig = {
    */
   walletAutoConnect: true,
 
-  skyNftApiUrl: process.env.SKYNFT_API_URL || "http://127.0.0.1:8000/api/skymap/",
+  skyNftApiUrl: process.env.NEXT_PUBLIC_SKYNFT_API_URL || "http://127.0.0.1:8000/api/skymap/",
 } as const satisfies ScaffoldConfig;
 
 export default scaffoldConfig;
