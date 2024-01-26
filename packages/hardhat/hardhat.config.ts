@@ -1,5 +1,6 @@
 import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomicfoundation/hardhat-toolbox";
+import "dotenv/config";
 import "hardhat-contract-sizer";
 import "hardhat-deploy";
 import "hardhat-insight";
@@ -12,9 +13,8 @@ import "./tasks/greet";
 import "./tasks/taskDeploy";
 
 // Run 'npx hardhat vars setup' to see the list of variables that need to be set
-
 const mnemonic: string = vars.get("MNEMONIC");
-const infuraApiKey: string = vars.get("INFURA_API_KEY");
+const infuraApiKey: string = process.env.INFURA_API_KEY || ""; //vars.get("INFURA_API_KEY");
 
 const chainIds = {
   "arbitrum-mainnet": 42161,
@@ -26,8 +26,8 @@ const chainIds = {
   anvil: 31337,
   mainnet: 1,
   "optimism-mainnet": 10,
-  "polygon-mainnet": 137,
   "polygon-mumbai": 80001,
+  "polygon-mainnet": 137,
   sepolia: 11155111,
 };
 
@@ -105,13 +105,19 @@ const config: HardhatUserConfig = {
       chainId: chainIds.anvil,
       url: "http://127.0.0.1:8545",
     },
+    "polygon-mumbai": {
+      url: "https://polygon-mumbai.infura.io/v3/" + infuraApiKey,
+      accounts: process.env.POLYGON_MUMBAI_DEPLOYER_PRIVATE_KEY
+        ? [process.env.POLYGON_MUMBAI_DEPLOYER_PRIVATE_KEY]
+        : [],
+      chainId: chainIds["polygon-mumbai"],
+    },
     arbitrum: getChainConfig("arbitrum-mainnet"),
     avalanche: getChainConfig("avalanche"),
     bsc: getChainConfig("bsc"),
     mainnet: getChainConfig("mainnet"),
     optimism: getChainConfig("optimism-mainnet"),
     "polygon-mainnet": getChainConfig("polygon-mainnet"),
-    "polygon-mumbai": getChainConfig("polygon-mumbai"),
     sepolia: getChainConfig("sepolia"),
   },
   paths: {
