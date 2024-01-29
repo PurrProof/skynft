@@ -30,3 +30,50 @@ p {
 .btn.btn-ghost {
   @apply shadow-none;
 }
+
+.carousel .carousel-item {
+  height: 300px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.carousel .carousel-item img {
+  max-height: 100%;
+  object-fit: contain; /* Maintains aspect ratio */
+}
+
+/* Style for the modal overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Style for the modal content */
+.modal-content {
+  position: relative;
+  background: transparent;
+  border: none;
+  width: auto;
+  height: auto
+}
+
+.modal-image {
+  width: 100%;
+  height: auto;
+}
+
+.modal-close {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  cursor: pointer;
+}
