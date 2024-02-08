@@ -51,6 +51,9 @@ export const Footer = () => {
                   Scaffold ETH 2
                 </a>
               </p>
+              <Link href="/terms" passHref className="link">
+                Terms &amp; Privacy
+              </Link>
             </div>
           </div>
         </ul>
